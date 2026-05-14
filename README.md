@@ -68,6 +68,16 @@ AI:  Archived to openspec/changes/archive/2025-01-23-add-dark-mode/
      Specs updated. Ready for the next feature.
 ```
 
+## Runtime Validation Loop
+
+OpenSpec can now turn Given/When/Then scenarios into executable runtime checks:
+
+- `openspec validate <change>` compiles scenarios into Midscene YAML and runs deterministic Playwright validation
+- `openspec freeze <change>` exports passing scenarios into `playwright/validation.generated.spec.ts`
+- `openspec archive` blocks when `validation.md` contains non-green scenarios unless you pass `--skip-validation`
+
+See [docs/validation-loop.md](docs/validation-loop.md) for the architecture, Mermaid diagram, and demo workflow.
+
 <details>
 <summary><strong>OpenSpec Dashboard</strong></summary>
 

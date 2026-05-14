@@ -94,6 +94,29 @@ describe('ArchiveCommand', () => {
       );
     });
 
+    it('should block archiving when validation.md contains FAIL rows', async () => {
+      const changeName = 'failed-validation-feature';
+      const changeDir = path.join(tempDir, 'openspec', 'changes', changeName);
+      await fs.mkdir(changeDir, { recursive: true });
+      await fs.writeFile(path.join(changeDir, 'tasks.md'), '- [x] Task 1\n');
+      await fs.writeFile(
+        path.join(changeDir, 'validation.md'),
+        `# Validation Report
+
+| REQ-ID | Scenario | Status | Evidence | Failure Reason |
+|---|---|---|---|---|
+| REQ-TODO-001 | Add a todo item | FAIL | — | broken |
+`
+      );
+
+      await archiveCommand.execute(changeName, { yes: true });
+
+      expect(console.log).toHaveBeenCalledWith(
+        expect.stringContaining('validation.md contains non-PASS scenarios')
+      );
+      await expect(fs.access(changeDir)).resolves.toBeUndefined();
+    });
+
     it('should update specs when archiving (delta-based ADDED) and include change name in skeleton', async () => {
       const changeName = 'spec-feature';
       const changeDir = path.join(tempDir, 'openspec', 'changes', changeName);

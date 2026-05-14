@@ -4,6 +4,7 @@ import { Validator } from '../core/validation/validator.js';
 import { isInteractive, resolveNoInteractive } from '../utils/interactive.js';
 import { getActiveChangeIds, getSpecIds } from '../utils/item-discovery.js';
 import { nearestMatches } from '../utils/match.js';
+import { validateRuntimeChange, type ValidationTarget } from '../validators/runtime-validation.js';
 
 type ItemType = 'change' | 'spec';
 
@@ -12,6 +13,7 @@ interface ExecuteOptions {
   changes?: boolean;
   specs?: boolean;
   type?: string;
+  target?: ValidationTarget;
   strict?: boolean;
   json?: boolean;
   noInteractive?: boolean;
@@ -29,6 +31,19 @@ interface BulkItemResult {
 
 export class ValidateCommand {
   async execute(itemName: string | undefined, options: ExecuteOptions = {}): Promise<void> {
+    if (itemName && (options.target || looksLikeChangePath(itemName))) {
+      const runtime = await validateRuntimeChange(itemName, {
+        target: options.target ?? 'all',
+      });
+      const failed = runtime.results.some((result) => result.status === 'FAIL');
+      const passed = runtime.results.filter((result) => result.status === 'PASS').length;
+      const skipped = runtime.results.filter((result) => result.status === 'SKIPPED').length;
+      console.log(`Runtime validation wrote ${path.relative(process.cwd(), runtime.validationPath)}`);
+      console.log(`Scenarios: ${passed} passed, ${failed ? runtime.results.filter((result) => result.status === 'FAIL').length : 0} failed, ${skipped} skipped`);
+      process.exitCode = failed ? 1 : 0;
+      return;
+    }
+
     const interactive = isInteractive(options);
 
     // Handle bulk flags first
@@ -293,6 +308,10 @@ export class ValidateCommand {
 
     process.exitCode = failed > 0 ? 1 : 0;
   }
+}
+
+function looksLikeChangePath(itemName: string): boolean {
+  return itemName.includes(path.sep) || itemName.includes('/') || itemName.endsWith('.md');
 }
 
 function summarizeType(results: BulkItemResult[], type: ItemType) {
