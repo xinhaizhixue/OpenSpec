@@ -80,5 +80,9 @@
     "posthog-node": "^5.20.0",
     "yaml": "^2.8.2",
     "zod": "^4.0.17"
+  },
+  "optionalDependencies": {
+    "@midscene/web": "1.8.1",
+    "@playwright/test": "1.60.0"
   }
 }

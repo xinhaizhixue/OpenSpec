@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OpenSpec Demo Todo App</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <h1>OpenSpec Demo Todo App</h1>
+      <p class="subtitle">No login. Just a tiny todo flow for runtime validation.</p>
+      <form id="todo-form" class="composer">
+        <input id="new-todo-input" data-testid="new-todo-input" name="todo" placeholder="Add a todo" autocomplete="off">
+        <button type="submit" data-testid="add-todo-button">Add todo</button>
+      </form>
+      <ul id="todo-list" class="todo-list" aria-label="Todo list"></ul>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+  </html>

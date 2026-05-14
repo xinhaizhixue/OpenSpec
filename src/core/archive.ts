@@ -3,6 +3,7 @@ import path from 'path';
 import { getTaskProgressForChange, formatTaskStatus } from '../utils/task-progress.js';
 import { Validator } from './validation/validator.js';
 import chalk from 'chalk';
+import { validationReportIsAllGreen } from '../validators/report/writeback.js';
 import {
   findSpecUpdates,
   buildUpdatedSpec,
@@ -50,7 +51,7 @@ async function moveDirectory(src: string, dest: string): Promise<void> {
 export class ArchiveCommand {
   async execute(
     changeName?: string,
-    options: { yes?: boolean; skipSpecs?: boolean; noValidate?: boolean; validate?: boolean } = {}
+    options: { yes?: boolean; skipSpecs?: boolean; noValidate?: boolean; validate?: boolean; skipValidation?: boolean } = {}
   ): Promise<void> {
     const targetPath = '.';
     const changesDir = path.join(targetPath, 'openspec', 'changes');
@@ -86,10 +87,21 @@ export class ArchiveCommand {
       throw new Error(`Change '${changeName}' not found.`);
     }
 
-    const skipValidation = options.validate === false || options.noValidate === true;
+    const skipValidation = options.skipValidation === true || options.validate === false || options.noValidate === true;
 
     // Validate specs and change before archiving
     if (!skipValidation) {
+      const validationReportPath = path.join(changeDir, 'validation.md');
+      try {
+        const validationMarkdown = await fs.readFile(validationReportPath, 'utf-8');
+        if (!validationReportIsAllGreen(validationMarkdown)) {
+          console.log(chalk.red('validation.md contains non-PASS scenarios. Re-run `openspec validate` or use --skip-validation to bypass.'));
+          return;
+        }
+      } catch {
+        // validation.md is currently optional for backwards compatibility.
+      }
+
       const validator = new Validator();
       let hasValidationErrors = false;
 
