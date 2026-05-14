@@ -17,7 +17,7 @@ export async function collectSpecCoverage(projectRoot: string): Promise<SpecCove
     }
 
     const content = await fs.readFile(filePath, 'utf-8');
-    const pattern = /@spec\s+([A-Z0-9-]+)/g;
+    const pattern = /@spec\s+([A-Za-z0-9-]+)/g;
     for (const match of content.matchAll(pattern)) {
       const requirementId = match[1];
       const references = matches.get(requirementId) ?? [];

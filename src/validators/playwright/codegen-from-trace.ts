@@ -40,7 +40,7 @@ export async function generatePlaywrightSpec(
     lines.push(`test('${scenario.requirementId} ${escapeText(scenario.scenarioTitle)}', async ({ page }) => {`);
     for (const step of scenario.steps) {
       if (step.action === 'goto') {
-        lines.push(`  await page.goto(new URL('${step.path ?? '/'}', baseUrl).toString(), { waitUntil: 'networkidle' });`);
+        lines.push(`  await page.goto(new URL('${step.path ?? '/'}', baseUrl).toString(), { waitUntil: 'domcontentloaded' });`);
       } else if (step.action === 'fill-new-todo') {
         lines.push(`  await page.getByTestId('new-todo-input').fill('${escapeText(step.todoTitle ?? '')}');`);
       } else if (step.action === 'click-add-todo') {

@@ -56,4 +56,26 @@ The system SHALL allow completing todos.
     expect(yaml).toContain('action: toggle-todo');
     expect(yaml).toContain('todoTitle: Buy milk');
   });
+
+  it('supports single-quoted todo titles', () => {
+    const [scenario] = parseSpecScenarios(
+      `## ADDED Requirements
+
+### REQ-TODO-003: Delete todo items
+The system SHALL allow deleting todos.
+
+#### Scenario: Delete a todo item
+- **GIVEN** the user opens the todo app
+- **WHEN** the user deletes todo 'Buy milk'
+- **THEN** todo 'Buy milk' is absent
+`,
+      'specs/todos/spec.md'
+    );
+
+    expect(scenario.steps.map((step) => step.action)).toEqual([
+      'goto',
+      'delete-todo',
+      'assert-absent',
+    ]);
+  });
 });

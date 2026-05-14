@@ -39,7 +39,9 @@ export async function validateRuntimeChange(
   const scenarios = await collectValidationScenarios(changeDir);
 
   if (scenarios.length === 0) {
-    throw new Error(`No executable scenarios found in ${path.join(changeDir, 'specs')}`);
+    throw new Error(
+      `No executable scenarios found in ${path.join(changeDir, 'specs')}. Ensure the change has spec files with stable REQ-IDs and #### Scenario blocks that use recognizable Given/When/Then steps.`
+    );
   }
 
   const results: ValidationScenarioResult[] = [];
@@ -71,7 +73,9 @@ export async function freezeRuntimeValidation(changeRef: string): Promise<string
   const config = readValidationConfig(findProjectRoot(changeDir));
   const scenarios = await collectValidationScenarios(changeDir);
   if (scenarios.length === 0) {
-    throw new Error(`No executable scenarios found in ${path.join(changeDir, 'specs')}`);
+    throw new Error(
+      `No executable scenarios found in ${path.join(changeDir, 'specs')}. Ensure the change has spec files with stable REQ-IDs and #### Scenario blocks that use recognizable Given/When/Then steps.`
+    );
   }
 
   const resultsPath = path.join(changeDir, '.openspec-validation', 'results.json');
@@ -89,7 +93,7 @@ export function readValidationConfig(projectRoot: string): ValidationConfig {
   const configPath = path.join(projectRoot, 'openspec.config.json');
   if (!existsSync(configPath)) {
     return {
-      baseUrl: 'http://127.0.0.1:3000',
+      baseUrl: 'http://localhost:3000',
       midscene: { model: 'gpt-4o', apiKeyEnv: 'OPENAI_API_KEY' },
       playwright: { configPath: 'playwright.config.ts' },
     };
@@ -97,7 +101,7 @@ export function readValidationConfig(projectRoot: string): ValidationConfig {
 
   const raw = JSON.parse(readFileSync(configPath, 'utf-8')) as { validation?: ValidationConfig } | undefined;
   return {
-    baseUrl: raw?.validation?.baseUrl ?? 'http://127.0.0.1:3000',
+    baseUrl: raw?.validation?.baseUrl ?? 'http://localhost:3000',
     midscene: {
       model: raw?.validation?.midscene?.model ?? 'gpt-4o',
       apiKeyEnv: raw?.validation?.midscene?.apiKeyEnv ?? 'OPENAI_API_KEY',

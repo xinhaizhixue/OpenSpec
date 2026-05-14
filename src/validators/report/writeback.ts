@@ -69,5 +69,5 @@ export function validationReportIsAllGreen(markdown: string): boolean {
 }
 
 function escapePipe(value: string): string {
-  return value.replace(/\|/g, '\\|');
+  return value.replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
 }

@@ -10,5 +10,5 @@
 
 ## 3. Validation
 
-- [ ] 3.1 为每条 spec scenario 生成 Midscene YAML 验证脚本
-- [ ] 3.2 运行 `openspec validate <change-id>` 并确保 validation.md 全绿
+- [ ] 3.1 Generate Midscene YAML validation scripts for each spec scenario
+- [ ] 3.2 Run `openspec validate <change-id>` and ensure validation.md is all green

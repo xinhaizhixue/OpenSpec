@@ -43,7 +43,7 @@ export async function runPlaywrightValidation(
       try {
         for (const step of scenario.steps) {
           if (step.action === 'goto') {
-            await page.goto(new URL(step.path ?? '/', config.baseUrl).toString(), { waitUntil: 'networkidle' });
+            await page.goto(new URL(step.path ?? '/', config.baseUrl).toString(), { waitUntil: 'domcontentloaded' });
             continue;
           }
 

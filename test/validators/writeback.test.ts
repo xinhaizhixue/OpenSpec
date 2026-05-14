@@ -53,5 +53,16 @@ describe('validation writeback', () => {
 `
       )
     ).toBe(false);
+
+    expect(
+      validationReportIsAllGreen(
+        `# Validation Report
+
+| REQ-ID | Scenario | Status | Evidence | Failure Reason |
+|---|---|---|---|---|
+| REQ-TODO-001 | Add a todo item | SKIPPED | — | no key |
+`
+      )
+    ).toBe(false);
   });
 });

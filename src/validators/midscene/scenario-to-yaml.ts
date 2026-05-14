@@ -145,7 +145,7 @@ function compileScenarioSteps(lines: string[]): RuntimeStep[] {
 }
 
 function compileStep(keyword: 'GIVEN' | 'WHEN' | 'THEN' | undefined, sentence: string): RuntimeStep | null {
-  const quotedTodo = sentence.match(/"([^"]+)"/)?.[1];
+  const quotedTodo = sentence.match(/["'`]([^"'`]+)["'`]/)?.[1];
 
   if (keyword === 'GIVEN' && /(open|visit|load).*(todo app|home page|page)/i.test(sentence)) {
     return { action: 'goto', path: '/', source: sentence };
