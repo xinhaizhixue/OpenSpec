@@ -44,13 +44,28 @@ export function renderValidationReport(
 export function validationReportIsAllGreen(markdown: string): boolean {
   const rows = markdown
     .split('\n')
-    .filter((line) => /^\|\s*[A-Z0-9-]+\s*\|/.test(line));
+    .filter((line) => line.trim().startsWith('|'))
+    .filter((line) => !line.includes('REQ-ID') && !/^\|\s*-+\s*\|/.test(line));
 
   if (rows.length === 0) {
     return false;
   }
 
-  return rows.every((row) => /\|\s*PASS\s*\|/.test(row));
+  const statusesByScenario = new Map<string, string[]>();
+  for (const row of rows) {
+    const cells = row.split('|').map((cell) => cell.trim()).filter(Boolean);
+    const scenarioKey = `${cells[0]}::${cells[1]}`;
+    const statuses = statusesByScenario.get(scenarioKey) ?? [];
+    statuses.push(cells[2]);
+    statusesByScenario.set(scenarioKey, statuses);
+  }
+
+  return Array.from(statusesByScenario.values()).every((statuses) => {
+    if (statuses.includes('FAIL')) {
+      return false;
+    }
+    return statuses.includes('PASS');
+  });
 }
 
 function escapePipe(value: string): string {

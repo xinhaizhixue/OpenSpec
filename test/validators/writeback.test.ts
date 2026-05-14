@@ -37,6 +37,7 @@ describe('validation writeback', () => {
 
 | REQ-ID | Scenario | Status | Evidence | Failure Reason |
 |---|---|---|---|---|
+| REQ-TODO-001 | Add a todo item | SKIPPED | — | no key |
 | REQ-TODO-001 | Add a todo item | PASS | — | — |
 `
       )
